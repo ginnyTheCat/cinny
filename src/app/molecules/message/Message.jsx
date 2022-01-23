@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  useState, useEffect, useCallback, useRef,
+} from 'react';
 import PropTypes from 'prop-types';
 import './Message.scss';
 
@@ -234,6 +236,14 @@ MessageBody.propTypes = {
 function MessageEdit({ body, onSave, onCancel }) {
   const editInputRef = useRef(null);
 
+  useEffect(() => {
+    editInputRef.current.focus();
+
+    // Setting the value here instead of using the value prop below
+    // makes the cursor end up at the end of the line instead of the begining
+    editInputRef.current.value = body;
+  }, []);
+
   const handleKeyDown = (e) => {
     if (e.keyCode === 13 && e.shiftKey === false) {
       e.preventDefault();
@@ -246,7 +256,6 @@ function MessageEdit({ body, onSave, onCancel }) {
       <Input
         forwardRef={editInputRef}
         onKeyDown={handleKeyDown}
-        value={body}
         placeholder="Edit message"
         required
         resizable
