@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import cons from './cons';
+import Favicon from "./Favicon";
 
 function isNotifEvent(mEvent) {
   const eType = mEvent.getType();
@@ -23,6 +24,8 @@ class Notifications extends EventEmitter {
 
     this._initNoti();
     this._listenEvents();
+
+	this.favicon = new Favicon(this);
 
     // TODO:
     window.notifications = this;
@@ -172,6 +175,7 @@ class Notifications extends EventEmitter {
 
       const noti = this.getNoti(room.roomId);
       this._setNoti(room.roomId, total - noti.total, highlight - noti.highlight);
+      this.favicon.update();
     });
 
     this.matrixClient.on('Room.receipt', (mEvent, room) => {
@@ -182,6 +186,7 @@ class Notifications extends EventEmitter {
         if (readerUserId !== this.matrixClient.getUserId()) return;
 
         this.deleteNoti(room.roomId);
+        this.favicon.update();
       }
     });
 
