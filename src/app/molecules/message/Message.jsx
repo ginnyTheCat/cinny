@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  useState, useEffect, useCallback, useRef,
+} from 'react';
 import PropTypes from 'prop-types';
 import './Message.scss';
 
@@ -11,7 +13,7 @@ import colorMXID from '../../../util/colorMXID';
 import { getEventCords } from '../../../util/common';
 import { redactEvent, sendReaction } from '../../../client/action/roomTimeline';
 import {
-  openEmojiBoard, openProfileViewer, openReadReceipts, replyTo,
+  openEmojiBoard, openProfileViewer, openReadReceipts, openViewSource, replyTo,
 } from '../../../client/action/navigation';
 import { sanitizeCustomHtml } from '../../../util/sanitize';
 
@@ -30,6 +32,7 @@ import EmojiAddIC from '../../../../public/res/ic/outlined/emoji-add.svg';
 import VerticalMenuIC from '../../../../public/res/ic/outlined/vertical-menu.svg';
 import PencilIC from '../../../../public/res/ic/outlined/pencil.svg';
 import TickMarkIC from '../../../../public/res/ic/outlined/tick-mark.svg';
+import CmdIC from '../../../../public/res/ic/outlined/cmd.svg';
 import BinIC from '../../../../public/res/ic/outlined/bin.svg';
 
 function PlaceholderMessage() {
@@ -472,6 +475,12 @@ const MessageOptions = React.memo(({
               onClick={() => openReadReceipts(roomId, roomTimeline.getEventReaders(mEvent))}
             >
               Read receipts
+            </MenuItem>
+            <MenuItem
+              iconSrc={CmdIC}
+              onClick={() => openViewSource(mEvent)}
+            >
+              View source
             </MenuItem>
             {(canIRedact || senderId === mx.getUserId()) && (
               <>
