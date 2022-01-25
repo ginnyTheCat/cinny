@@ -8,7 +8,9 @@ import { blurOnBubbling } from '../../atoms/button/script';
 import initMatrix from '../../../client/initMatrix';
 import cons from '../../../client/state/cons';
 import navigation from '../../../client/state/navigation';
-import { toggleRoomSettings, openReusableContextMenu, openNavigation } from '../../../client/action/navigation';
+import {
+  toggleRoomSettings, openReusableContextMenu, openPinnedMessages, openNavigation,
+} from '../../../client/action/navigation';
 import { togglePeopleDrawer } from '../../../client/action/settings';
 import colorMXID from '../../../util/colorMXID';
 import { getEventCords } from '../../../util/common';
@@ -23,6 +25,7 @@ import RoomOptions from '../../molecules/room-options/RoomOptions';
 
 import ChevronBottomIC from '../../../../public/res/ic/outlined/chevron-bottom.svg';
 import SearchIC from '../../../../public/res/ic/outlined/search.svg';
+import PinIC from '../../../../public/res/ic/outlined/pin.svg';
 import UserIC from '../../../../public/res/ic/outlined/user.svg';
 import VerticalMenuIC from '../../../../public/res/ic/outlined/vertical-menu.svg';
 import BackArrowIC from '../../../../public/res/ic/outlined/chevron-left.svg';
@@ -95,6 +98,7 @@ function RoomViewHeader({ roomId }) {
         <RawIcon src={ChevronBottomIC} />
       </button>
       {mx.isRoomEncrypted(roomId) === false && <IconButton onClick={() => toggleRoomSettings(tabText.SEARCH)} tooltip="Search" src={SearchIC} />}
+      <IconButton onClick={(e) => openPinnedMessages(getEventCords(e), roomId)} tooltip="Pinned messages" src={PinIC} />
       <IconButton className="room-header__drawer-btn" onClick={togglePeopleDrawer} tooltip="People" src={UserIC} />
       <IconButton className="room-header__members-btn" onClick={() => toggleRoomSettings(tabText.MEMBERS)} tooltip="Members" src={UserIC} />
       <IconButton
