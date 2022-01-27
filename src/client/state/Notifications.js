@@ -112,6 +112,7 @@ class Notifications extends EventEmitter {
     if (!childId || this._remainingParentIds?.has(roomId)) {
       noti.total += total;
       noti.highlight += highlight;
+	  this.favicon.inc(total, highlight)
     }
     if (childId) {
       if (noti.from === null) noti.from = new Set();
@@ -147,6 +148,7 @@ class Notifications extends EventEmitter {
     if (childId && noti.from !== null) {
       if (!this.hasNoti(childId)) noti.from.delete(childId);
     }
+	if (!childId) this.favicon.dec(total, highlight);
     if (noti.from === null || noti.from.size === 0) {
       this.roomIdToNoti.delete(roomId);
       this.emit(cons.events.notifications.FULL_READ, roomId);
@@ -175,7 +177,6 @@ class Notifications extends EventEmitter {
 
       const noti = this.getNoti(room.roomId);
       this._setNoti(room.roomId, total - noti.total, highlight - noti.highlight);
-      this.favicon.update();
     });
 
     this.matrixClient.on('Room.receipt', (mEvent, room) => {
@@ -184,9 +185,8 @@ class Notifications extends EventEmitter {
         const readedEventId = Object.keys(content)[0];
         const readerUserId = Object.keys(content[readedEventId]['m.read'])[0];
         if (readerUserId !== this.matrixClient.getUserId()) return;
-
+		
         this.deleteNoti(room.roomId);
-        this.favicon.update();
       }
     });
 

@@ -1,6 +1,9 @@
 class Favicon {
 	constructor(notifications) {
 		this.noti = notifications;
+
+		this.highlightNotiCount = 0;
+		this.totalNotiCount = 0;
 		
 		this.iconRef = document.querySelector("head > link[rel=\"icon\"]");
 		this.iconSize = 36;
@@ -15,24 +18,24 @@ class Favicon {
 
 		this.ctx = this.canvas.getContext("2d");
 
-		this.logo.addEventListener("load", () => this.update());
+		this.logo.addEventListener("load", () => this._update());
 	}
 
-	async update() {
-		let totalNotiCount = 0;
-		let highlightNotiCount = 0;
+	inc(total, highlight) {
+		const prev = this.highlightNotiCount;
+		this.totalNotiCount += total;
+		this.highlightNotiCount += highlight;
+		if (prev < 10 && this.highlightNotiCount < 10) {
+			this._update();
+		}
+	}
 
-		this.noti.matrixClient.getRooms().forEach(room => {
-			const {roomId} = room;
+	dec(total, highlight) {
+		this.inc(total * -1, highlight * -1)
+	}
 
-			if (this.noti.roomList.spaceShortcut.has(roomId)) return;
-			if (!this.noti.hasNoti(roomId)) return;
-
-			totalNotiCount += this.noti.getTotalNoti(roomId);
-			highlightNotiCount += this.noti.getHighlightNoti(roomId);
-		})
-
-		if (totalNotiCount == 0) {
+	async _update() {
+		if (this.totalNotiCount == 0) {
 			this.iconRef.href = this.iconDefault;
 			return;
 		}
@@ -44,18 +47,18 @@ class Favicon {
 		this.ctx.fillStyle = '#f04747';
 		this._drawCircle(this.iconSize / 3);
 
-		if (highlightNotiCount < 1) {
+		if (this.highlightNotiCount < 1) {
 			this._applyCanvas();
 			return;
 		}
 
 		this.ctx.fillStyle = "#fff";
-		if (highlightNotiCount < 10) {
+		if (this.highlightNotiCount < 10) {
 			let position = this.iconSize * 2/3;
 			this.ctx.font = `bold 20px sans-serif`;
 			this.ctx.textAlign = "center";
 			this.ctx.textBaseline = "middle";
-			this.ctx.fillText(highlightNotiCount, position, position + 1)
+			this.ctx.fillText(this.highlightNotiCount, position, position + 1)
 		} else {
 			this._drawCircle(this.iconSize / 3)
 		}
