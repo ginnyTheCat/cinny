@@ -1,3 +1,5 @@
+import CinnySVG from "../../../public/res/svg/cinny.svg";
+
 class Favicon {
 	constructor(notifications) {
 		this.noti = notifications;
@@ -7,11 +9,10 @@ class Favicon {
 		
 		this.iconRef = document.querySelector("head > link[rel=\"icon\"]");
 		this.iconSize = 36;
-		this.iconDefault = "/assets/favicon.svg";
 
 		this.logo = new Image();
 		this._applySize(this.logo);
-		this.logo.src = this.iconDefault;
+		this.logo.src = CinnySVG;
 
 		this.canvas = document.createElement("canvas");
 		this._applySize(this.canvas);
@@ -36,7 +37,7 @@ class Favicon {
 
 	async _update() {
 		if (this.totalNotiCount == 0) {
-			this.iconRef.href = this.iconDefault;
+			this.iconRef.href = CinnySVG;
 			return;
 		}
 
@@ -70,7 +71,7 @@ class Favicon {
 		this.canvas.toBlob((blob) => {
 			// this should never happen but whatever
 			if (!blob) {
-				this.iconRef.href = this.iconDefault;
+				this.iconRef.href = CinnySVG;
 				return;
 			}
 			
