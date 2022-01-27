@@ -112,6 +112,7 @@ class Notifications extends EventEmitter {
     if (!childId || this._remainingParentIds?.has(roomId)) {
       noti.total += total;
       noti.highlight += highlight;
+	  if (!this.favicon) this.favicon = new Favicon();
 	  this.favicon.inc(total, highlight)
     }
     if (childId) {
@@ -148,7 +149,10 @@ class Notifications extends EventEmitter {
     if (childId && noti.from !== null) {
       if (!this.hasNoti(childId)) noti.from.delete(childId);
     }
-	if (!childId) this.favicon.dec(total, highlight);
+	if (!childId) {
+		if (!this.favicon) this.favicon = new Favicon();
+		this.favicon.dec(total, highlight);
+	}
     if (noti.from === null || noti.from.size === 0) {
       this.roomIdToNoti.delete(roomId);
       this.emit(cons.events.notifications.FULL_READ, roomId);
