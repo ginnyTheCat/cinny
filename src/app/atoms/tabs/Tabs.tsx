@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import './Tabs.scss';
 
 import Button from '../button/Button';
 import ScrollView from '../scroll/ScrollView';
 
+type TabItemProps = {
+  selected?: boolean;
+  iconSrc?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  children?: React.ReactNode;
+  disabled?: boolean;
+};
+
 function TabItem({
-  selected, iconSrc,
-  onClick, children, disabled,
-}) {
+  selected, iconSrc, onClick, children, disabled,
+}: TabItemProps) {
   const isSelected = selected ? 'tab-item--selected' : '';
 
   return (
@@ -23,25 +29,26 @@ function TabItem({
   );
 }
 
-TabItem.defaultProps = {
-  selected: false,
-  iconSrc: null,
-  onClick: null,
-  disabled: false,
+export type TabItemData = {
+  iconSrc?: string;
+  text?: string;
+  disabled?: boolean;
 };
 
-TabItem.propTypes = {
-  selected: PropTypes.bool,
-  iconSrc: PropTypes.string,
-  onClick: PropTypes.func,
-  children: PropTypes.node.isRequired,
-  disabled: PropTypes.bool,
+export type TabsProps = {
+  items: TabItemData[];
+  defaultSelected?: number;
+  onSelect: (item: TabItemData, index: number) => void;
 };
 
-function Tabs({ items, defaultSelected, onSelect }) {
+export default function Tabs({
+  items,
+  defaultSelected = 0,
+  onSelect,
+}: TabsProps) {
   const [selectedItem, setSelectedItem] = useState(items[defaultSelected]);
 
-  const handleTabSelection = (item, index) => {
+  const handleTabSelection = (item: TabItemData, index: number) => {
     if (selectedItem === item) return;
     setSelectedItem(item);
     onSelect(item, index);
@@ -67,21 +74,3 @@ function Tabs({ items, defaultSelected, onSelect }) {
     </div>
   );
 }
-
-Tabs.defaultProps = {
-  defaultSelected: 0,
-};
-
-Tabs.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.exact({
-      iconSrc: PropTypes.string,
-      text: PropTypes.string,
-      disabled: PropTypes.bool,
-    }),
-  ).isRequired,
-  defaultSelected: PropTypes.number,
-  onSelect: PropTypes.func.isRequired,
-};
-
-export { Tabs as default };

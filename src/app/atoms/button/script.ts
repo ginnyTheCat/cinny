@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 /**
  * blur [selector] element in bubbling path.
  * @param {Event} e Event
@@ -5,7 +7,10 @@
  * @return {boolean} if blured return true, else return false with warning in console
  */
 
-function blurOnBubbling(e, selector) {
+export function blurOnBubbling(
+  e: any,
+  selector: string,
+): boolean {
   const bubblingPath = e.nativeEvent.composedPath();
 
   for (let elIndex = 0; elIndex < bubblingPath.length; elIndex += 1) {
@@ -20,4 +25,3 @@ function blurOnBubbling(e, selector) {
   }
   return false;
 }
-export { blurOnBubbling };

@@ -8,7 +8,7 @@ module.exports = {
     main: './src/index.jsx'
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
     fallback: {
       'crypto': require.resolve('crypto-browserify'),
       'path': require.resolve('path-browserify'),
@@ -24,6 +24,11 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: 'ts-loader',
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,

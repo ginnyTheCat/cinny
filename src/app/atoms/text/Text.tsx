@@ -1,12 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './Text.scss';
 
-function Text({
-  className, style, variant, weight,
-  primary, span, children,
-}) {
-  const classes = [];
+export type TextProps = {
+  className?: string;
+  style?: any;
+  variant?: 'h1' | 'h2' | 's1' | 'b1' | 'b2' | 'b3';
+  weight?: 'light' | 'normal' | 'medium' | 'bold';
+  primary?: boolean;
+  span?: boolean;
+  children?: React.ReactNode;
+};
+
+export default function Text({
+  className,
+  style,
+  variant = 'b1',
+  weight = 'normal',
+  primary,
+  span,
+  children,
+}: TextProps) {
+  const classes: string[] = [];
   if (className) classes.push(className);
 
   classes.push(`text text-${variant} text-${weight}`);
@@ -19,24 +33,3 @@ function Text({
   if (variant === 's1') return <h4 className={textClass} style={style}>{ children }</h4>;
   return <p className={textClass} style={style}>{ children }</p>;
 }
-
-Text.defaultProps = {
-  className: null,
-  style: null,
-  variant: 'b1',
-  weight: 'normal',
-  primary: false,
-  span: false,
-};
-
-Text.propTypes = {
-  className: PropTypes.string,
-  style: PropTypes.shape({}),
-  variant: PropTypes.oneOf(['h1', 'h2', 's1', 'b1', 'b2', 'b3']),
-  weight: PropTypes.oneOf(['light', 'normal', 'medium', 'bold']),
-  primary: PropTypes.bool,
-  span: PropTypes.bool,
-  children: PropTypes.node.isRequired,
-};
-
-export default Text;
