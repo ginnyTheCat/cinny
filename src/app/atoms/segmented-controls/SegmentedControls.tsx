@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import './SegmentedControls.scss';
 
 import { blurOnBubbling } from '../button/script';
@@ -7,12 +6,21 @@ import { blurOnBubbling } from '../button/script';
 import Text from '../text/Text';
 import RawIcon from '../system-icons/RawIcon';
 
-function SegmentedControls({
+export type SegmentedControlsProps = {
+  selected: number;
+  segments: {
+    iconSrc?: string;
+    text?: string;
+  }[];
+  onSelect: (index: number) => void;
+};
+
+export default function SegmentedControls({
   selected, segments, onSelect,
-}) {
+}: SegmentedControlsProps) {
   const [select, setSelect] = useState(selected);
 
-  function selectSegment(segmentIndex) {
+  function selectSegment(segmentIndex: number) {
     setSelect(segmentIndex);
     onSelect(segmentIndex);
   }
@@ -42,14 +50,3 @@ function SegmentedControls({
     </div>
   );
 }
-
-SegmentedControls.propTypes = {
-  selected: PropTypes.number.isRequired,
-  segments: PropTypes.arrayOf(PropTypes.shape({
-    iconSrc: PropTypes.string,
-    text: PropTypes.string,
-  })).isRequired,
-  onSelect: PropTypes.func.isRequired,
-};
-
-export default SegmentedControls;

@@ -1,9 +1,11 @@
 import React from 'react';
 import './RawIcon.scss';
 
+export type RawIconSize = 'large' | 'normal' | 'small' | 'extra-small';
+
 export type RawIconProps = {
   color?: string;
-  size?: 'large' | 'normal' | 'small' | 'extra-small';
+  size?: RawIconSize;
   src: string;
   isImage?: boolean;
 };

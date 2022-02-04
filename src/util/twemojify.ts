@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import linkifyHtml from 'linkifyjs/html';
 import parse from 'html-react-parser';
-import twemoji from 'twemoji';
+import twemoji, { ParseObject } from 'twemoji';
 import { sanitizeText } from './sanitize';
 
 /**
@@ -11,7 +11,12 @@ import { sanitizeText } from './sanitize';
  * @param {boolean} [sanitize=true] - sanitize html text (default: true)
  * @returns React component
  */
-export function twemojify(text, opts, linkify = false, sanitize = true) {
+export function twemojify(
+  text: string,
+  opts?: Partial<ParseObject>,
+  linkify: boolean = false,
+  sanitize: boolean = true,
+) {
   if (typeof text !== 'string') return text;
   let content = text;
 

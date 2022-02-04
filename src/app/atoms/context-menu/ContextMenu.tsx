@@ -1,23 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import './ContextMenu.scss';
 
 import Tippy from '@tippyjs/react';
 import 'tippy.js/animations/scale-extreme.css';
 
+import { Placement } from 'tippy.js';
 import Text from '../text/Text';
 import Button from '../button/Button';
 import ScrollView from '../scroll/ScrollView';
 
-function ContextMenu({
-  content, placement, maxWidth, render, afterToggle,
-}) {
+export type ContextMenuProps = {
+  content: React.ReactNode | ((hideMenu: () => void) => void);
+  placement?: Placement;
+  maxWidth?: string | number;
+  render: (toggle: () => void) => React.ReactElement;
+  afterToggle?: (visible: boolean) => void;
+};
+
+export default function ContextMenu({
+  content,
+  placement = 'right',
+  maxWidth = 'unset',
+  render,
+  afterToggle,
+}: ContextMenuProps) {
   const [isVisible, setVisibility] = useState(false);
   const showMenu = () => setVisibility(true);
   const hideMenu = () => setVisibility(false);
 
   useEffect(() => {
-    if (afterToggle !== null) afterToggle(isVisible);
+    if (afterToggle) afterToggle(isVisible);
   }, [isVisible]);
 
   return (
@@ -38,27 +50,11 @@ function ContextMenu({
   );
 }
 
-ContextMenu.defaultProps = {
-  maxWidth: 'unset',
-  placement: 'right',
-  afterToggle: null,
+export type MenuHeaderProps = {
+  children: React.ReactNode;
 };
 
-ContextMenu.propTypes = {
-  content: PropTypes.oneOfType([
-    PropTypes.node,
-    PropTypes.func,
-  ]).isRequired,
-  placement: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
-  maxWidth: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]),
-  render: PropTypes.func.isRequired,
-  afterToggle: PropTypes.func,
-};
-
-function MenuHeader({ children }) {
+export function MenuHeader({ children }: MenuHeaderProps) {
   return (
     <div className="context-menu__header">
       <Text variant="b3">{ children }</Text>
@@ -66,14 +62,23 @@ function MenuHeader({ children }) {
   );
 }
 
-MenuHeader.propTypes = {
-  children: PropTypes.node.isRequired,
+export type MenuItemProps = {
+  variant?: 'surface' | 'positive' | 'caution' | 'danger';
+  iconSrc?: string;
+  type?: 'button' | 'submit';
+  onClick?: React.MouseEventHandler<HTMLButtonElement> ;
+  children?: React.ReactNode;
+  disabled?: boolean;
 };
 
-function MenuItem({
-  variant, iconSrc, type,
-  onClick, children, disabled,
-}) {
+export function MenuItem({
+  variant = 'surface',
+  iconSrc,
+  type = 'button',
+  onClick,
+  children,
+  disabled,
+}: MenuItemProps) {
   return (
     <div className="context-menu__item">
       <Button
@@ -89,27 +94,6 @@ function MenuItem({
   );
 }
 
-MenuItem.defaultProps = {
-  variant: 'surface',
-  iconSrc: null,
-  type: 'button',
-  disabled: false,
-  onClick: null,
-};
-
-MenuItem.propTypes = {
-  variant: PropTypes.oneOf(['surface', 'positive', 'caution', 'danger']),
-  iconSrc: PropTypes.string,
-  type: PropTypes.oneOf(['button', 'submit']),
-  onClick: PropTypes.func,
-  children: PropTypes.node.isRequired,
-  disabled: PropTypes.bool,
-};
-
-function MenuBorder() {
+export function MenuBorder() {
   return <div style={{ borderBottom: '1px solid var(--bg-surface-border)' }}> </div>;
 }
-
-export {
-  ContextMenu as default, MenuHeader, MenuItem, MenuBorder,
-};

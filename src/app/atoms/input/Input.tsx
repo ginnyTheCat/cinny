@@ -1,15 +1,32 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './Input.scss';
 
 import TextareaAutosize from 'react-autosize-textarea';
 
-function Input({
+export type InputProps = {
+  id?: string;
+  name?: string;
+  label?: string;
+  value?: string;
+  placeholder?: string;
+  required?: boolean;
+  type?: string;
+  onChange?: () => void;
+  forwardRef?: React.Ref<HTMLTextAreaElement & HTMLInputElement>;
+  resizable?: boolean;
+  minHeight?: number;
+  onResize?: () => void;
+  state?: 'normal' | 'success' | 'error';
+  onKeyDown?: () => void;
+  disabled?: boolean;
+};
+
+export default function Input({
   id, label, name, value, placeholder,
-  required, type, onChange, forwardRef,
-  resizable, minHeight, onResize, state,
+  required, type = 'text', onChange, forwardRef,
+  resizable, minHeight = 46, onResize, state = 'normal',
   onKeyDown, disabled,
-}) {
+}: InputProps) {
   return (
     <div className="input-container">
       { label !== '' && <label className="input__label text-b2" htmlFor={id}>{label}</label> }
@@ -50,41 +67,3 @@ function Input({
     </div>
   );
 }
-
-Input.defaultProps = {
-  id: null,
-  name: '',
-  label: '',
-  value: '',
-  placeholder: '',
-  type: 'text',
-  required: false,
-  onChange: null,
-  forwardRef: null,
-  resizable: false,
-  minHeight: 46,
-  onResize: null,
-  state: 'normal',
-  onKeyDown: null,
-  disabled: false,
-};
-
-Input.propTypes = {
-  id: PropTypes.string,
-  name: PropTypes.string,
-  label: PropTypes.string,
-  value: PropTypes.string,
-  placeholder: PropTypes.string,
-  required: PropTypes.bool,
-  type: PropTypes.string,
-  onChange: PropTypes.func,
-  forwardRef: PropTypes.shape({}),
-  resizable: PropTypes.bool,
-  minHeight: PropTypes.number,
-  onResize: PropTypes.func,
-  state: PropTypes.oneOf(['normal', 'success', 'error']),
-  onKeyDown: PropTypes.func,
-  disabled: PropTypes.bool,
-};
-
-export default Input;

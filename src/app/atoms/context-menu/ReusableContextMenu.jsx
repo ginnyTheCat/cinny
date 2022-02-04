@@ -6,9 +6,9 @@ import navigation from '../../../client/state/navigation';
 import ContextMenu from './ContextMenu';
 
 let key = null;
-function ReusableContextMenu() {
+export default function ReusableContextMenu() {
   const [data, setData] = useState(null);
-  const openerRef = useRef(null);
+  const openerRef = useRef < HTMLInputElement > (null);
 
   const closeMenu = () => {
     key = null;
@@ -83,5 +83,3 @@ function ReusableContextMenu() {
     />
   );
 }
-
-export default ReusableContextMenu;

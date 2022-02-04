@@ -1,10 +1,12 @@
 import React from 'react';
 import './Text.scss';
 
+export type TextVariant = 'h1' | 'h2' | 's1' | 'b1' | 'b2' | 'b3';
+
 export type TextProps = {
   className?: string;
   style?: any;
-  variant?: 'h1' | 'h2' | 's1' | 'b1' | 'b2' | 'b3';
+  variant?: TextVariant;
   weight?: 'light' | 'normal' | 'medium' | 'bold';
   primary?: boolean;
   span?: boolean;
