@@ -214,7 +214,7 @@ function Search() {
           <IconButton size="small" src={CrossIC} type="reset" onClick={handleCross} tabIndex={-1} />
         </form>
         <div className="search-dialog__content-wrapper">
-          <ScrollView autoHide>
+          <ScrollView autoHide focusable={false}>
             <div className="search-dialog__content">
               { Array.isArray(result?.chunk) && result.chunk.map(renderRoomSelector) }
             </div>
