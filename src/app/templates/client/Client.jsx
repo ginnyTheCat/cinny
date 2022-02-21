@@ -9,12 +9,13 @@ import Room from '../../organisms/room/Room';
 import Windows from '../../organisms/pw/Windows';
 import Dialogs from '../../organisms/pw/Dialogs';
 import EmojiBoardOpener from '../../organisms/emoji-board/EmojiBoardOpener';
+import KeyVerificationOpener from '../../organisms/key-verification/KeyVerificationOpener';
+import DragDrop from '../../organisms/drag-drop/DragDrop';
 import logout from '../../../client/action/logout';
 
 import initMatrix from '../../../client/initMatrix';
 import navigation from '../../../client/state/navigation';
 import cons from '../../../client/state/cons';
-import DragDrop from '../../organisms/drag-drop/DragDrop';
 
 function Client() {
   const [isLoading, changeLoading] = useState(true);
@@ -25,7 +26,7 @@ function Client() {
     let counter = 0;
     const iId = setInterval(() => {
       const msgList = [
-        'Sometimes it takes a while...',
+        'Almost there...',
         'Looks like you have a lot of stuff to heat up!',
       ];
       if (counter === msgList.length - 1) {
@@ -35,7 +36,7 @@ function Client() {
       }
       setLoadingMsg(msgList[counter]);
       counter += 1;
-    }, 9000);
+    }, 15000);
     initMatrix.once('init_loading_finished', () => {
       clearInterval(iId);
       changeLoading(false);
@@ -132,6 +133,7 @@ function Client() {
       <Windows />
       <Dialogs />
       <EmojiBoardOpener />
+      <KeyVerificationOpener />
       <ReusableContextMenu />
       <DragDrop isOpen={dragCounter !== 0} />
     </div>

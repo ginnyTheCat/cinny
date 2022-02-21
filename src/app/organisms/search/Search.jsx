@@ -6,6 +6,7 @@ import cons from '../../../client/state/cons';
 import navigation from '../../../client/state/navigation';
 import AsyncSearch from '../../../util/AsyncSearch';
 import { selectRoom, selectTab } from '../../../client/action/navigation';
+import { joinRuleToIconSrc } from '../../../util/matrixUtil';
 
 import Text from '../../atoms/text/Text';
 import RawIcon from '../../atoms/system-icons/RawIcon';
@@ -16,12 +17,6 @@ import ScrollView from '../../atoms/scroll/ScrollView';
 import RoomSelector from '../../molecules/room-selector/RoomSelector';
 
 import SearchIC from '../../../../public/res/ic/outlined/search.svg';
-import HashIC from '../../../../public/res/ic/outlined/hash.svg';
-import HashGlobeIC from '../../../../public/res/ic/outlined/hash-globe.svg';
-import HashLockIC from '../../../../public/res/ic/outlined/hash-lock.svg';
-import SpaceIC from '../../../../public/res/ic/outlined/space.svg';
-import SpaceGlobeIC from '../../../../public/res/ic/outlined/space-globe.svg';
-import SpaceLockIC from '../../../../public/res/ic/outlined/space-lock.svg';
 import CrossIC from '../../../../public/res/ic/outlined/cross.svg';
 
 function useVisiblityToggle(setResult) {
@@ -183,12 +178,7 @@ function Search() {
     if (item.type === 'direct') {
       imageSrc = item.room.getAvatarFallbackMember()?.getAvatarUrl(mx.baseUrl, 24, 24, 'crop') || null;
     } else {
-      const joinRuleToIconSrc = (joinRule) => ({
-        restricted: () => (item.type === 'space' ? SpaceIC : HashIC),
-        invite: () => (item.type === 'space' ? SpaceLockIC : HashLockIC),
-        public: () => (item.type === 'space' ? SpaceGlobeIC : HashGlobeIC),
-      }[joinRule]?.() || null);
-      iconSrc = joinRuleToIconSrc(item.room.getJoinRule());
+      iconSrc = joinRuleToIconSrc(item.room.getJoinRule(), item.type === 'space');
     }
 
     const isUnread = notifs.hasNoti(item.roomId);
@@ -220,7 +210,7 @@ function Search() {
       size="small"
     >
       <div className="search-dialog">
-        <form className="search-dialog__input" onSubmit={(e) => { e.preventDefault(); openFirstResult()}}>
+        <form className="search-dialog__input" onSubmit={(e) => { e.preventDefault(); openFirstResult(); }}>
           <RawIcon src={SearchIC} size="small" />
           <Input
             onChange={handleOnChange}
@@ -230,7 +220,7 @@ function Search() {
           <IconButton size="small" src={CrossIC} type="reset" onClick={handleCross} tabIndex={-1} />
         </form>
         <div className="search-dialog__content-wrapper">
-          <ScrollView autoHide>
+          <ScrollView autoHide focusable={false}>
             <div className="search-dialog__content">
               { Array.isArray(result?.chunk) && result.chunk.map(renderRoomSelector) }
             </div>

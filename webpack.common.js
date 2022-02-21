@@ -39,7 +39,7 @@ module.exports = {
         use: ['html-loader'],
       },
       {
-        test: /\.(png|jpe?g|gif|otf|ttf)$/,
+        test: /\.(png|jpe?g|gif|otf|ttf|woff|woff2)$/,
         type: 'asset/resource',
       },
       {
@@ -53,7 +53,7 @@ module.exports = {
     new FaviconsWebpackPlugin({
       logo: './public/res/svg/cinny.svg',
       mode: 'webapp',
-      devMode: 'light',
+      devMode: 'webapp',
       favicons: {
         appName: 'Cinny',
         appDescription: 'Yet another matrix client',
@@ -69,6 +69,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: 'olm.wasm' },
+        { from: 'sw.js' },
         { from: '_redirects' },
         { from: 'config.json' },
       ],
