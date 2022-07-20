@@ -5,7 +5,7 @@ import { emojis } from './emoji';
 class ImagePack {
   static parsePack(eventId, packContent) {
     if (!eventId || typeof packContent?.images !== 'object') {
-      return null;
+      return [];
     }
 
     return new ImagePack(eventId, packContent);
@@ -172,7 +172,7 @@ function getGlobalImagePacks(mx) {
 function getUserImagePack(mx) {
   const accountDataEmoji = mx.getAccountData('im.ponies.user_emotes');
   if (!accountDataEmoji) {
-    return null;
+    return [];
   }
 
   const userImagePack = ImagePack.parsePack(mx.getUserId(), accountDataEmoji.event.content);
