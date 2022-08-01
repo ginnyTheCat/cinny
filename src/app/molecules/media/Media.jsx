@@ -39,14 +39,15 @@ const ALLOWED_BLOB_MIMETYPES = [
   'audio/x-flac',
 ];
 function getBlobSafeMimeType(mimetype) {
-  if (!ALLOWED_BLOB_MIMETYPES.includes(mimetype)) {
+  const [type] = mimetype.split(';');
+  if (!ALLOWED_BLOB_MIMETYPES.includes(type)) {
     return 'application/octet-stream';
   }
   // Required for Chromium browsers
-  if (mimetype === 'video/quicktime') {
+  if (type === 'video/quicktime') {
     return 'video/mp4';
   }
-  return mimetype;
+  return type;
 }
 
 async function getDecryptedBlob(response, type, decryptData) {
