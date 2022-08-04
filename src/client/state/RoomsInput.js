@@ -6,7 +6,6 @@ import { math } from 'micromark-extension-math';
 import { encode } from 'blurhash';
 import { getShortcodeToEmoji } from '../../app/organisms/emoji-board/custom-emoji';
 import { mathExtensionHtml, spoilerExtension, spoilerExtensionHtml } from '../../util/markdown';
-import { getImageDimension } from '../../util/common';
 import cons from './cons';
 import settings from './settings';
 
@@ -318,7 +317,6 @@ class RoomsInput extends EventEmitter {
 
       info.w = img.width;
       info.h = img.height;
-
       info[blurhashField] = encodeBlurhash(img);
 
       content.msgtype = 'm.image';
@@ -329,8 +327,11 @@ class RoomsInput extends EventEmitter {
 
       try {
         const video = await loadVideo(file);
+
         info.w = video.videoWidth;
         info.h = video.videoHeight;
+        info[blurhashField] = encodeBlurhash(video);
+
         const thumbnailData = await getVideoThumbnail(video, video.videoWidth, video.videoHeight, 'image/jpeg');
         const thumbnailUploadData = await this.uploadFile(roomId, thumbnailData.thumbnail);
         info.thumbnail_info = thumbnailData.info;
