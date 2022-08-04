@@ -3,11 +3,33 @@ import { micromark } from 'micromark';
 import { gfm, gfmHtml } from 'micromark-extension-gfm';
 import encrypt from 'browser-encrypt-attachment';
 import { math } from 'micromark-extension-math';
+import { encode } from 'blurhash';
 import { getShortcodeToEmoji } from '../../app/organisms/emoji-board/custom-emoji';
 import { mathExtensionHtml, spoilerExtension, spoilerExtensionHtml } from '../../util/markdown';
 import { getImageDimension } from '../../util/common';
 import cons from './cons';
 import settings from './settings';
+
+const blurhashField = 'xyz.amorgan.blurhash';
+
+function encodeBlurhash(img) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 100;
+  canvas.height = 100;
+  const context = canvas.getContext('2d');
+  context.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const data = context.getImageData(0, 0, canvas.width, canvas.height);
+  return encode(data.data, data.width, data.height, 4, 4);
+}
+
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = (err) => reject(err);
+    img.src = url;
+  });
+}
 
 function loadVideo(videoFile) {
   return new Promise((resolve, reject) => {
@@ -72,6 +94,7 @@ function getVideoThumbnail(video, width, height, mimeType) {
           h: targetHeight,
           mimetype: thumbnail.type,
           size: thumbnail.size,
+          [blurhashField]: encodeBlurhash(video),
         },
       });
     }, mimeType);
@@ -291,10 +314,12 @@ class RoomsInput extends EventEmitter {
     let uploadData = null;
 
     if (fileType === 'image') {
-      const imgDimension = await getImageDimension(file);
+      const img = await loadImage(URL.createObjectURL(file));
 
-      info.w = imgDimension.w;
-      info.h = imgDimension.h;
+      info.w = img.width;
+      info.h = img.height;
+
+      info[blurhashField] = encodeBlurhash(img);
 
       content.msgtype = 'm.image';
       content.body = file.name || 'Image';
