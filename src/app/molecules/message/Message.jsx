@@ -33,6 +33,7 @@ import EmojiAddIC from '../../../../public/res/ic/outlined/emoji-add.svg';
 import VerticalMenuIC from '../../../../public/res/ic/outlined/vertical-menu.svg';
 import PencilIC from '../../../../public/res/ic/outlined/pencil.svg';
 import TickMarkIC from '../../../../public/res/ic/outlined/tick-mark.svg';
+import PinIC from '../../../../public/res/ic/outlined/pin.svg';
 import CmdIC from '../../../../public/res/ic/outlined/cmd.svg';
 import BinIC from '../../../../public/res/ic/outlined/bin.svg';
 
@@ -162,8 +163,8 @@ const MessageReplyWrapper = React.memo(({ roomTimeline, eventId }) => {
   }, []);
 
   const focusReply = (ev) => {
-    if (!ev.keyCode || ev.keyCode === 32 || ev.keyCode === 13) {
-      if (ev.keyCode) ev.preventDefault();
+    if (!ev.key || ev.key === ' ' || ev.key === 'Enter') {
+      if (ev.key) ev.preventDefault();
       if (reply?.event === null) return;
       if (reply?.event.isRedacted()) return;
       roomTimeline.loadEventTimeline(eventId);
@@ -277,7 +278,7 @@ function MessageEdit({ body, onSave, onCancel }) {
   }, []);
 
   const handleKeyDown = (e) => {
-    if (e.keyCode === 13 && e.shiftKey === false) {
+    if (e.key === 'Enter' && e.shiftKey === false) {
       e.preventDefault();
       onSave(editInputRef.current.value);
     }
@@ -505,11 +506,30 @@ const MessageOptions = React.memo(({
 }) => {
   const { roomId, room } = roomTimeline;
   const mx = initMatrix.matrixClient;
+  const eventId = mEvent.getId();
   const senderId = mEvent.getSender();
 
   const myPowerlevel = room.getMember(mx.getUserId())?.powerLevel;
   const canIRedact = room.currentState.hasSufficientPowerLevelFor('redact', myPowerlevel);
   const canSendReaction = room.currentState.maySendEvent('m.reaction', mx.getUserId());
+
+  const togglePinned = () => {
+    const pinned = room.currentState.getStateEvents('m.room.pinned_events', '')?.getContent().pinned || [];
+    if (pinned.includes(eventId)) {
+      pinned.splice(pinned.indexOf(eventId), 1);
+    } else {
+      pinned.push(eventId);
+    }
+
+    mx.sendStateEvent(roomId, 'm.room.pinned_events', { pinned });
+  };
+
+  const isPinned = () => {
+    const pinnedEvent = room.currentState.getStateEvents('m.room.pinned_events', '');
+    if (!pinnedEvent) return false;
+    const { pinned } = pinnedEvent.getContent();
+    return pinned && pinned.includes(eventId);
+  };
 
   return (
     <div className="message__options">
@@ -544,6 +564,12 @@ const MessageOptions = React.memo(({
               onClick={() => openReadReceipts(roomId, roomTimeline.getEventReaders(mEvent))}
             >
               Read receipts
+            </MenuItem>
+            <MenuItem
+              iconSrc={PinIC}
+              onClick={togglePinned}
+            >
+              {isPinned() ? 'Unpin message' : 'Pin message'}
             </MenuItem>
             <MenuItem
               iconSrc={CmdIC}
@@ -609,6 +635,8 @@ function genMediaContent(mE) {
   let msgType = mE.getContent()?.msgtype;
   if (mE.getType() === 'm.sticker') msgType = 'm.image';
 
+  const blurhash = mContent?.info?.['xyz.amorgan.blurhash'];
+
   switch (msgType) {
     case 'm.file':
       return (
@@ -628,6 +656,7 @@ function genMediaContent(mE) {
           link={mx.mxcUrlToHttp(mediaMXC)}
           file={isEncryptedFile ? mContent.file : null}
           type={mContent.info?.mimetype}
+          blurhash={blurhash}
         />
       );
     case 'm.audio':
@@ -654,6 +683,7 @@ function genMediaContent(mE) {
           height={typeof mContent.info?.h === 'number' ? mContent.info?.h : null}
           file={isEncryptedFile ? mContent.file : null}
           type={mContent.info?.mimetype}
+          blurhash={blurhash}
         />
       );
     default:
