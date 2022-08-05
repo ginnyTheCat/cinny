@@ -533,6 +533,7 @@ const MessageOptions = React.memo(({
   const canIRedact = room.currentState.hasSufficientPowerLevelFor('redact', myPowerlevel);
   const canSendReaction = room.currentState.maySendEvent('m.reaction', mx.getUserId());
 
+  const canPinn = room.currentState.maySendStateEvent('m.room.pinned_events', mx.getUserId());
   const togglePinned = () => {
     const pinned = room.currentState.getStateEvents('m.room.pinned_events', '')?.getContent().pinned || [];
     if (pinned.includes(eventId)) {
@@ -585,12 +586,14 @@ const MessageOptions = React.memo(({
             >
               Read receipts
             </MenuItem>
+            { canPinn && (
             <MenuItem
               iconSrc={PinIC}
               onClick={togglePinned}
             >
               {isPinned() ? 'Unpin message' : 'Pin message'}
             </MenuItem>
+            )}
             <MenuItem
               iconSrc={CmdIC}
               onClick={() => handleOpenViewSource(mEvent, roomTimeline)}
