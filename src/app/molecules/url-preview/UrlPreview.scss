@@ -1,0 +1,16 @@
+.url-preview {
+  --media-max-width: 296px;
+
+  background-color: var(--bg-surface-hover);
+  border-radius: calc(var(--bo-radius) / 2);
+  overflow: hidden;
+  max-width: var(--media-max-width);
+  white-space: initial;
+
+  margin-top: var(--sp-extra-tight);
+  padding: var(--sp-tight) var(--sp-tight);
+
+  &__title {
+    margin-bottom: var(--sp-ultra-tight);
+  }
+}

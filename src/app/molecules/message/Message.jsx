@@ -27,6 +27,7 @@ import IconButton from '../../atoms/button/IconButton';
 import Time from '../../atoms/time/Time';
 import ContextMenu, { MenuHeader, MenuItem, MenuBorder } from '../../atoms/context-menu/ContextMenu';
 import * as Media from '../media/Media';
+import UrlPreview from '../url-preview/UrlPreview';
 
 import ReplyArrowIC from '../../../../public/res/ic/outlined/reply-arrow.svg';
 import EmojiAddIC from '../../../../public/res/ic/outlined/emoji-add.svg';
@@ -755,6 +756,8 @@ function Message({
     if (typeof body !== 'string') return null;
   }
 
+  const previews = content['com.beeper.linkpreviews'];
+
   if (isReply) {
     body = parseReply(body)?.body ?? body;
   }
@@ -809,6 +812,7 @@ function Message({
             onCancel={cancelEdit}
           />
         )}
+        {previews?.map((p) => <UrlPreview data={p} key={p.matched_url} />)}
         {haveReactions && (
           <MessageReactionGroup roomTimeline={roomTimeline} mEvent={mEvent} />
         )}
