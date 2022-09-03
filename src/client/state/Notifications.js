@@ -44,6 +44,7 @@ class Notifications extends EventEmitter {
 
     this.roomIdToNoti = new Map();
     this.roomIdToPopupNotis = new Map();
+    this.eventIdToPopupNoti = new Map();
 
     // this._initNoti();
     this._listenEvents();
@@ -268,6 +269,7 @@ class Notifications extends EventEmitter {
       }
       noti.onclick = () => selectRoom(room.roomId, mEvent.getId());
 
+      this.eventIdToPopupNoti.set(mEvent.getId(), noti);
       if (this.roomIdToPopupNotis.has(room.roomId)) {
         this.roomIdToPopupNotis.get(room.roomId).push(noti);
       } else {
@@ -278,8 +280,16 @@ class Notifications extends EventEmitter {
     }
   }
 
-  _deletePopupNoti(roomId) {
-    this.roomIdToPopupNotis.get(roomId)?.forEach((n) => n.close());
+  _deletePopupNoti(eventId) {
+    this.eventIdToPopupNoti.get(eventId)?.close();
+    this.eventIdToPopupNoti.delete(eventId);
+  }
+
+  _deletePopupRoomNotis(roomId) {
+    this.roomIdToPopupNotis.get(roomId)?.forEach((n) => {
+      this.eventIdToPopupNoti.delete(roomId);
+      n.close();
+    });
     this.roomIdToPopupNotis.delete(roomId);
   }
 
@@ -299,6 +309,8 @@ class Notifications extends EventEmitter {
 
   _listenEvents() {
     this.matrixClient.on('Room.timeline', (mEvent, room) => {
+      if (mEvent.isRedaction()) this._deletePopupNoti(mEvent.event.redacts);
+
       if (room.isSpaceRoom()) return;
       if (!isNotifEvent(mEvent)) return;
 
@@ -370,7 +382,7 @@ class Notifications extends EventEmitter {
 
         this.deleteNoti(room.roomId);
 
-        this._deletePopupNoti(room.roomId);
+        this._deletePopupRoomNotis(room.roomId);
       }
     });
 
