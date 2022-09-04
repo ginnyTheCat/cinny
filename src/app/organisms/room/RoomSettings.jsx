@@ -41,6 +41,7 @@ import ChevronTopIC from '../../../../public/res/ic/outlined/chevron-top.svg';
 
 import { useForceUpdate } from '../../hooks/useForceUpdate';
 import { confirmDialog } from '../../molecules/confirm-dialog/ConfirmDialog';
+import RoomTimezone from '../../molecules/room-timezone/RoomTimezone';
 
 const tabText = {
   GENERAL: 'General',
@@ -126,6 +127,10 @@ function GeneralSettings({ roomId }) {
       <div className="room-settings__card">
         <MenuHeader>Room addresses</MenuHeader>
         <RoomAliases roomId={roomId} />
+      </div>
+      <div className="room-settings__card">
+        <MenuHeader>Timezones</MenuHeader>
+        <RoomTimezone roomId={roomId} />
       </div>
     </>
   );
