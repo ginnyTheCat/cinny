@@ -27,12 +27,14 @@ import IconButton from '../../atoms/button/IconButton';
 import Time from '../../atoms/time/Time';
 import ContextMenu, { MenuHeader, MenuItem, MenuBorder } from '../../atoms/context-menu/ContextMenu';
 import * as Media from '../media/Media';
+import UrlPreview from '../url-preview/UrlPreview';
 
 import ReplyArrowIC from '../../../../public/res/ic/outlined/reply-arrow.svg';
 import EmojiAddIC from '../../../../public/res/ic/outlined/emoji-add.svg';
 import VerticalMenuIC from '../../../../public/res/ic/outlined/vertical-menu.svg';
 import PencilIC from '../../../../public/res/ic/outlined/pencil.svg';
 import TickMarkIC from '../../../../public/res/ic/outlined/tick-mark.svg';
+import PinIC from '../../../../public/res/ic/outlined/pin.svg';
 import CmdIC from '../../../../public/res/ic/outlined/cmd.svg';
 import BinIC from '../../../../public/res/ic/outlined/bin.svg';
 
@@ -525,11 +527,31 @@ const MessageOptions = React.memo(({
 }) => {
   const { roomId, room } = roomTimeline;
   const mx = initMatrix.matrixClient;
+  const eventId = mEvent.getId();
   const senderId = mEvent.getSender();
 
   const myPowerlevel = room.getMember(mx.getUserId())?.powerLevel;
   const canIRedact = room.currentState.hasSufficientPowerLevelFor('redact', myPowerlevel);
   const canSendReaction = room.currentState.maySendEvent('m.reaction', mx.getUserId());
+
+  const canPinn = room.currentState.maySendStateEvent('m.room.pinned_events', mx.getUserId());
+  const togglePinned = () => {
+    const pinned = room.currentState.getStateEvents('m.room.pinned_events', '')?.getContent().pinned || [];
+    if (pinned.includes(eventId)) {
+      pinned.splice(pinned.indexOf(eventId), 1);
+    } else {
+      pinned.push(eventId);
+    }
+
+    mx.sendStateEvent(roomId, 'm.room.pinned_events', { pinned });
+  };
+
+  const isPinned = () => {
+    const pinnedEvent = room.currentState.getStateEvents('m.room.pinned_events', '');
+    if (!pinnedEvent) return false;
+    const { pinned } = pinnedEvent.getContent();
+    return pinned && pinned.includes(eventId);
+  };
 
   return (
     <div className="message__options">
@@ -565,6 +587,14 @@ const MessageOptions = React.memo(({
             >
               Read receipts
             </MenuItem>
+            { canPinn && (
+            <MenuItem
+              iconSrc={PinIC}
+              onClick={togglePinned}
+            >
+              {isPinned() ? 'Unpin message' : 'Pin message'}
+            </MenuItem>
+            )}
             <MenuItem
               iconSrc={CmdIC}
               onClick={() => handleOpenViewSource(mEvent, roomTimeline)}
@@ -755,6 +785,8 @@ function Message({
     if (typeof body !== 'string') return null;
   }
 
+  const previews = content['com.beeper.linkpreviews'];
+
   if (isReply) {
     body = parseReply(body)?.body ?? body;
   }
@@ -809,6 +841,7 @@ function Message({
             onCancel={cancelEdit}
           />
         )}
+        {previews?.map((p) => <UrlPreview data={p} key={p.matched_url} />)}
         {haveReactions && (
           <MessageReactionGroup roomTimeline={roomTimeline} mEvent={mEvent} />
         )}
