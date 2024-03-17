@@ -168,8 +168,9 @@ function RoomProfile({ roomId }) {
       {roomTopic && <Text variant="b2">{twemojify(roomTopic, undefined, true)}</Text>}
       {bridgeEvents.map((event) => {
         const { protocol, channel } = event.getContent();
+        if (!protocol?.displayname) return null;
         return (
-          <a href={channel.external_url} target="_blank" rel="noreferrer">
+          <a href={channel?.external_url} target="_blank" rel="noreferrer">
             <Badge size="500" outlined>
               <Text variant="b2">{protocol?.displayname}</Text>
             </Badge>
