@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './RoomProfile.scss';
+import { Badge } from 'folds';
 
 import { twemojify } from '../../../util/twemojify';
 
@@ -33,11 +34,14 @@ function RoomProfile({ roomId }) {
   const mx = initMatrix.matrixClient;
   const isDM = initMatrix.roomList.directs.has(roomId);
   let avatarSrc = mx.getRoom(roomId).getAvatarUrl(mx.baseUrl, 36, 36, 'crop');
-  avatarSrc = isDM ? mx.getRoom(roomId).getAvatarFallbackMember()?.getAvatarUrl(mx.baseUrl, 36, 36, 'crop') : avatarSrc;
+  avatarSrc = isDM
+    ? mx.getRoom(roomId).getAvatarFallbackMember()?.getAvatarUrl(mx.baseUrl, 36, 36, 'crop')
+    : avatarSrc;
   const room = mx.getRoom(roomId);
   const { currentState } = room;
   const roomName = room.name;
   const roomTopic = currentState.getStateEvents('m.room.topic')[0]?.getContent().topic;
+  const bridgeEvents = currentState.getStateEvents('uk.half-shot.bridge');
 
   const userId = mx.getUserId();
 
@@ -162,6 +166,16 @@ function RoomProfile({ roomId }) {
       </div>
       <Text variant="b3">{room.getCanonicalAlias() || room.roomId}</Text>
       {roomTopic && <Text variant="b2">{twemojify(roomTopic, undefined, true)}</Text>}
+      {bridgeEvents.map((event) => {
+        const { protocol, channel } = event.getContent();
+        return (
+          <a href={channel.external_url} target="_blank" rel="noreferrer">
+            <Badge size="500" outlined>
+              <Text variant="b2">{protocol?.displayname}</Text>
+            </Badge>
+          </a>
+        );
+      })}
     </div>
   );
 
