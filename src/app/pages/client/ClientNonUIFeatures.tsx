@@ -92,7 +92,7 @@ function InviteNotifications() {
       const noti = new window.Notification('Invitation', {
         icon: LogoSVG,
         badge: LogoSVG,
-        body: `You have ${count} new invitation request.`,
+        body: `You have ${count} new invitation request${count === 1 ? "" : "s"}`,
         silent: true,
       });
 
@@ -156,9 +156,9 @@ function MessageNotifications() {
       eventId: string;
       content: any;
     }) => {
-      console.log(plainContent(content));
+      const title = roomName === username ? roomName : `${username} (${roomName})`;
 
-      const noti = new window.Notification(roomName, {
+      const noti = new window.Notification(title, {
         icon: roomAvatar,
         badge: roomAvatar,
         body: plainContent(content),
@@ -221,7 +221,7 @@ function MessageNotifications() {
         const avatarMxc =
           room.getAvatarFallbackMember()?.getMxcAvatarUrl() ?? room.getMxcAvatarUrl();
         notify({
-          roomName: room.name ?? 'Unknown',
+          roomName: room.name,
           roomAvatar: avatarMxc
             ? mxcUrlToHttp(mx, avatarMxc, useAuthentication, 96, 96, 'crop') ?? undefined
             : undefined,
