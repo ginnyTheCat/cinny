@@ -1,6 +1,6 @@
 {
-  "defaultHomeserver": 1,
-  "homeserverList": ["converser.eu", "matrix.org", "mozilla.org", "unredacted.org", "xmr.se"],
+  "defaultHomeserver": 2,
+  "homeserverList": ["converser.eu", "matrix.org", "lelux.net", "mozilla.org", "unredacted.org", "xmr.se"],
   "allowCustomHomeservers": true,
 
   "featuredCommunities": {
