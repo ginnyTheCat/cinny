@@ -27,6 +27,7 @@ import { useSelectedRoom } from '../../hooks/router/useSelectedRoom';
 import { useInboxNotificationsSelected } from '../../hooks/router/useInbox';
 import { useMediaAuthentication } from '../../hooks/useMediaAuthentication';
 import { plainContent } from '../../utils/plain';
+import { useRoomNavigate } from '../../hooks/useRoomNavigate';
 
 function SystemEmojiFeature() {
   const [twitterEmoji] = useSetting(settingsAtom, 'twitterEmoji');
@@ -138,14 +139,16 @@ function MessageNotifications() {
   const [showNotifications] = useSetting(settingsAtom, 'showNotifications');
   const [notificationSound] = useSetting(settingsAtom, 'isNotificationSounds');
 
-  const navigate = useNavigate();
+  const { navigateRoom } = useRoomNavigate();
   const notificationSelected = useInboxNotificationsSelected();
   const selectedRoomId = useSelectedRoom();
 
   const notify = useCallback(
     ({
       roomName,
+      roomId,
       avatar,
+      eventId,
       username,
       content,
     }: {
@@ -166,7 +169,7 @@ function MessageNotifications() {
       });
 
       noti.onclick = () => {
-        if (!window.closed) navigate(getInboxNotificationsPath());
+        if (!window.closed) navigateRoom(roomId, eventId);
         noti.close();
         notifRef.current = undefined;
       };
@@ -174,7 +177,7 @@ function MessageNotifications() {
       notifRef.current?.close();
       notifRef.current = noti;
     },
-    [navigate]
+    [navigateRoom]
   );
 
   const playSound = useCallback(() => {
