@@ -145,22 +145,22 @@ function MessageNotifications() {
   const notify = useCallback(
     ({
       roomName,
-      roomAvatar,
+      avatar,
       username,
       content,
     }: {
       roomName: string;
-      roomAvatar?: string;
-      username: string;
       roomId: string;
+      username: string;
+      avatar?: string;
       eventId: string;
       content: any;
     }) => {
       const title = roomName === username ? roomName : `${username} (${roomName})`;
 
       const noti = new window.Notification(title, {
-        icon: roomAvatar,
-        badge: roomAvatar,
+        icon: avatar,
+        badge: avatar,
         body: plainContent(content),
         silent: true,
       });
@@ -217,16 +217,16 @@ function MessageNotifications() {
         return;
       }
 
-      if (showNotifications && notificationPermission('granted')) {
-        const avatarMxc =
-          room.getAvatarFallbackMember()?.getMxcAvatarUrl() ?? room.getMxcAvatarUrl();
+      if (showNotifications && Notification.permission === 'granted') {
+        const avatarMxc = mEvent.sender?.getMxcAvatarUrl();
+
         notify({
           roomName: room.name,
-          roomAvatar: avatarMxc
+          roomId: room.roomId,
+          username: getMemberDisplayName(room, sender) ?? getMxIdLocalPart(sender) ?? sender,
+          avatar: avatarMxc
             ? mxcUrlToHttp(mx, avatarMxc, useAuthentication, 96, 96, 'crop') ?? undefined
             : undefined,
-          username: getMemberDisplayName(room, sender) ?? getMxIdLocalPart(sender) ?? sender,
-          roomId: room.roomId,
           eventId,
           content: mEvent.getContent(),
         });
