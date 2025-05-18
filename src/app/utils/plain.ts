@@ -82,7 +82,7 @@ function renderElement(el: Element): string {
       if (title) {
         return `[${content}](${href} "${title}")`;
       }
-      if (content === href) {
+      if (content !== href) {
         return `[${content}](${href})`;
       }
       return content;
