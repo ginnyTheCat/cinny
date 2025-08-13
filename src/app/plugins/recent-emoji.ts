@@ -19,11 +19,16 @@ export const getRecentEmojis = (mx: MatrixClient, limit?: number): IEmoji[] => {
     .sort((e1, e2) => e2[1] - e1[1])
     .slice(0, limit)
     .reduce<IEmoji[]>((list, [unicode]) => {
-      const emoji = emojis.find((e) => e.unicode === unicode);
+      const normalizedUnicode = normalizeEmoji(unicode);
+      const emoji = emojis.find((e) => normalizeEmoji(e.unicode) === normalizedUnicode);
       if (emoji) list.push(emoji);
       return list;
     }, []);
 };
+
+function normalizeEmoji(unicode: string) {
+  return unicode.replace(/\ufe0f$/, "");
+}
 
 export function addRecentEmoji(mx: MatrixClient, unicode: string) {
   const recentEmojiEvent = getAccountData(mx, AccountDataEvent.ElementRecentEmoji);
