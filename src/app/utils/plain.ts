@@ -1,7 +1,5 @@
 /* eslint-disable no-use-before-define */
 
-import { parseIdUri } from '../../util/common';
-
 function renderElement(el: Element): string {
   switch (el.tagName) {
     case 'MX-REPLY':
@@ -176,4 +174,13 @@ export function plainContent(content: any): string {
   const el = document.createElement('template');
   el.innerHTML = content.formatted_body;
   return renderChildren(el.content);
+}
+
+const matrixToRegex = /^https?:\/\/matrix.to\/#\/(\S+:\S+)/;
+/**
+ * Parses a matrix.to URL into an matrix id.
+ * This function can later be extended to support matrix: URIs
+ */
+export function parseIdUri(uri: string) {
+  return decodeURIComponent(uri).match(matrixToRegex)?.[1];
 }
